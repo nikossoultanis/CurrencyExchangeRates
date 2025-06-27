@@ -11,6 +11,7 @@ namespace CurrencyExchangeRates.Infrastructure.Persistence
     public class AppDbContext : DbContext
     {
         public DbSet<CurrencyRate> CurrencyRates { get; set; } = null!;
+        public DbSet<Domain.Entities.Wallet> Wallets { get; set; } = null!;
 
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)

@@ -5,8 +5,8 @@ namespace CurrencyExchangeRates.Domain.Entities
     public class Wallet
     {
         public long Id { get; private set; }
-        public decimal Balance { get; private set; }
-        public string Currency { get; private set; } = string.Empty;
+        public decimal Balance { get; set; }
+        public string Currency { get; set; } = string.Empty;
 
         public Wallet(string currency)
         {
