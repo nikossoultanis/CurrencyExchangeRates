@@ -23,7 +23,7 @@ namespace CurrencyExchangeRates.Tests
             var handler = new FakeHttpMessageHandler(fakeXml);
             var httpClient = new HttpClient(handler);
 
-            var gateway = new EcbRatesGateway(httpClient);
+            var gateway = new EcbRatesGatewayService(httpClient);
 
             // Act
             var rates = await gateway.GetDailyRatesAsync();

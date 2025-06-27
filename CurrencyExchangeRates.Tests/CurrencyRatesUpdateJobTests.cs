@@ -14,7 +14,7 @@ namespace CurrencyExchangeRates.Tests
         public async Task ExecuteAsync_UpdatesDatabase()
         {
             // Arrange
-            var mockEcbGateway = new Mock<IEcbRatesGateway>();
+            var mockEcbGateway = new Mock<IEcbRatesGatewayService>();
             var options = new DbContextOptionsBuilder<AppDbContext>()
                 .UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=CurrencyExchangeRates;Trusted_Connection=True;Encrypt=False;")
                 .Options;
