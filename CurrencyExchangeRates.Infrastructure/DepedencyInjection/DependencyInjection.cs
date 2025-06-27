@@ -1,9 +1,11 @@
-﻿using CurrencyExchangeRates.Application.Common.Jobs.Implementaions;
+﻿using CurrencyExchangeRates.Application.Common.Interfaces;
+using CurrencyExchangeRates.Application.Common.Jobs.Implementaions;
 using CurrencyExchangeRates.Application.Common.Jobs.Interfaces;
 using CurrencyExchangeRates.EcbGateway.Services.Implementations;
 using CurrencyExchangeRates.EcbGateway.Services.Interfaces;
 using CurrencyExchangeRates.Infrastructure.Jobs;
 using CurrencyExchangeRates.Infrastructure.Persistence;
+using CurrencyExchangeRates.Infrastructure.Wallet;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,6 +36,7 @@ namespace CurrencyExchangeRates.Infrastructure.DepedencyInjection
             });
 
             services.AddQuartzHostedService();
+            services.AddScoped<IWalletAdjustmentStrategyFactory, WalletAdjustmentStrategyFactory>();
             return services;
         }
     }
