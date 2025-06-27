@@ -1,4 +1,5 @@
-﻿using CurrencyExchangeRates.Application.Common.Jobs.Implementaions;
+﻿using CurrencyExchangeRates.Application.Common.Interfaces;
+using CurrencyExchangeRates.Application.Common.Jobs.Implementaions;
 using CurrencyExchangeRates.Application.Common.Jobs.Interfaces;
 using CurrencyExchangeRates.Application.Domain.Entities.WalletLogic;
 using CurrencyExchangeRates.Application.WalletLogic;
@@ -9,6 +10,7 @@ using CurrencyExchangeRates.EcbGateway.Services.Interfaces;
 using CurrencyExchangeRates.Infrastructure.Jobs;
 using CurrencyExchangeRates.Infrastructure.Persistence;
 using CurrencyExchangeRates.Infrastructure.Repository;
+using CurrencyExchangeRates.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,7 +46,9 @@ namespace CurrencyExchangeRates.Infrastructure.DepedencyInjection
             services.AddScoped<IFundsAdjustmentStrategy, AddFundsStrategy>();
             services.AddScoped<IFundsAdjustmentStrategy, SubtractFundsStrategy>();
             services.AddScoped<IFundsAdjustmentStrategy, ForceSubtractFundsStrategy>();
-            services.AddScoped<WalletService>();
+            services.AddScoped<WalletService>(); 
+            services.AddMemoryCache();
+            services.AddScoped<ICurrencyRateService, CurrencyRateCacheService>();
 
             return services;
         }

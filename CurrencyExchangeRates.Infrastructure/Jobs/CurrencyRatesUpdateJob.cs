@@ -1,4 +1,5 @@
-﻿using CurrencyExchangeRates.Application.Common.Jobs.Interfaces;
+﻿using CurrencyExchangeRates.Application.Common.Interfaces;
+using CurrencyExchangeRates.Application.Common.Jobs.Interfaces;
 using CurrencyExchangeRates.EcbGateway.Services.Interfaces;
 using CurrencyExchangeRates.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -10,13 +11,16 @@ namespace CurrencyExchangeRates.Application.Common.Jobs.Implementaions
     {
         private readonly IEcbRatesGatewayService _ecbRateGateway;
         private readonly AppDbContext _dbContext;
+        private readonly ICurrencyRateService _currencyRateService;
 
         public CurrencyRatesUpdateJob(
             IEcbRatesGatewayService ecbRateGateway,
-            AppDbContext dbContext)
+            AppDbContext dbContext,
+            ICurrencyRateService currencyRateService)
         {
             _ecbRateGateway = ecbRateGateway;
             _dbContext = dbContext;
+            _currencyRateService = currencyRateService;
         }
 
         public async Task ExecuteAsync(CancellationToken cancellationToken)
@@ -42,7 +46,8 @@ namespace CurrencyExchangeRates.Application.Common.Jobs.Implementaions
                             INSERT (CurrencyCode, Rate, Date)
                             VALUES (Source.CurrencyCode, Source.Rate, Source.Date);";
 
-            await _dbContext.Database.ExecuteSqlRawAsync(sql, cancellationToken);
+            var completed = await _dbContext.Database.ExecuteSqlRawAsync(sql, cancellationToken);
+            _currencyRateService.SetRatesAsync(rates);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using CurrencyExchangeRates.Application.WalletLogic;
+﻿using CurrencyExchangeRates.Application.Common.Interfaces;
+using CurrencyExchangeRates.Application.WalletLogic;
 using CurrencyExchangeRates.Domain.CurrencyRateRepository;
 using CurrencyExchangeRates.Domain.Entities;
 using CurrencyExchangeRates.Domain.WalletRepository;
@@ -15,11 +16,13 @@ namespace CurrencyExchangeRates.Application.Domain.Entities.WalletLogic
         private readonly IWalletRepository _walletRepository;
         private readonly ICurrencyRateRepository _currencyRateRepository;
         private readonly IDictionary<string, IFundsAdjustmentStrategy> _strategies;
+        private readonly ICurrencyRateService _currencyRateService;
 
         public WalletService(
             IWalletRepository walletRepository,
             ICurrencyRateRepository currencyRateRepository,
-            IEnumerable<IFundsAdjustmentStrategy> strategies)
+            IEnumerable<IFundsAdjustmentStrategy> strategies,
+            ICurrencyRateService currencyRateService)
         {
             _walletRepository = walletRepository;
             _currencyRateRepository = currencyRateRepository;
@@ -28,6 +31,7 @@ namespace CurrencyExchangeRates.Application.Domain.Entities.WalletLogic
             {
                 _strategies[strategy.GetType().Name] = strategy;
             }
+            _currencyRateService = currencyRateService;
         }
 
         public async Task<Wallet> CreateWalletAsync(string currency)
@@ -50,8 +54,8 @@ namespace CurrencyExchangeRates.Application.Domain.Entities.WalletLogic
             var requestedCurrencyNormalized = requestedCurrency.ToUpperInvariant();
             var walletCurrencyNormalized = wallet.Currency.ToUpperInvariant();
 
-            var walletCurrencyRate = await _currencyRateRepository.GetLatestRateAsync(walletCurrencyNormalized);
-            var requestedCurrencyRate = await _currencyRateRepository.GetLatestRateAsync(requestedCurrencyNormalized);
+            var walletCurrencyRate = await _currencyRateService.GetLatestRateAsync(walletCurrencyNormalized);
+            var requestedCurrencyRate = await _currencyRateService.GetLatestRateAsync(requestedCurrencyNormalized);
 
             if (walletCurrencyRate == null)
                 throw new Exception($"Exchange rate not found for wallet currency '{walletCurrencyNormalized}'.");
@@ -82,8 +86,8 @@ namespace CurrencyExchangeRates.Application.Domain.Entities.WalletLogic
                 throw new ArgumentException($"Strategy '{strategyName}' is not supported.");
 
             // Convert amount to wallet currency
-            var walletCurrencyRate = await _currencyRateRepository.GetLatestRateAsync(wallet.Currency);
-            var amountCurrencyRate = await _currencyRateRepository.GetLatestRateAsync(currency);
+            var walletCurrencyRate = await _currencyRateRepository.GetCurrencyRateAsync(wallet.Currency);
+            var amountCurrencyRate = await _currencyRateRepository.GetCurrencyRateAsync(currency);
 
             if (walletCurrencyRate == null || amountCurrencyRate == null)
                 throw new Exception("Currency rate not available for conversion.");
