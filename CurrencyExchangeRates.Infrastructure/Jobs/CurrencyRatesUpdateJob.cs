@@ -8,11 +8,11 @@ namespace CurrencyExchangeRates.Application.Common.Jobs.Implementaions
 
     public class CurrencyRatesUpdateJob : ICurrencyRatesUpdateJob
     {
-        private readonly IEcbRatesGateway _ecbRateGateway;
+        private readonly IEcbRatesGatewayService _ecbRateGateway;
         private readonly AppDbContext _dbContext;
 
         public CurrencyRatesUpdateJob(
-            IEcbRatesGateway ecbRateGateway,
+            IEcbRatesGatewayService ecbRateGateway,
             AppDbContext dbContext)
         {
             _ecbRateGateway = ecbRateGateway;

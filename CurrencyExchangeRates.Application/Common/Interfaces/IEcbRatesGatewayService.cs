@@ -2,7 +2,7 @@
 
 namespace CurrencyExchangeRates.EcbGateway.Services.Interfaces
 {
-    public interface IEcbRatesGateway
+    public interface IEcbRatesGatewayService
     {
         Task<List<CurrencyRate>> GetDailyRatesAsync(CancellationToken cancellationToken = default);
     }

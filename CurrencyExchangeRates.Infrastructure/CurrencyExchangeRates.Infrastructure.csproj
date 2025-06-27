@@ -29,4 +29,8 @@
     <ProjectReference Include="..\CurrencyExchangeRates.EcbGateway\CurrencyExchangeRates.EcbGateway.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Wallet\" />
+  </ItemGroup>
+
 </Project>

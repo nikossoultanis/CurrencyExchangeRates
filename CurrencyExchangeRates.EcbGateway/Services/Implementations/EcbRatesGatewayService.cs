@@ -5,12 +5,12 @@ using System.Xml.Linq;
 
 namespace CurrencyExchangeRates.EcbGateway.Services.Implementations
 {
-    public class EcbRatesGateway : IEcbRatesGateway
+    public class EcbRatesGatewayService : IEcbRatesGatewayService
     {
         private readonly HttpClient _httpClient;
         private const string EcbUrl = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
 
-        public EcbRatesGateway(HttpClient httpClient)
+        public EcbRatesGatewayService(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }

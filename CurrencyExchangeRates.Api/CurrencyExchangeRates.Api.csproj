@@ -12,12 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CurrencyExchangeRates.Application\CurrencyExchangeRates.Application.csproj" />
-    <ProjectReference Include="..\CurrencyExchangeRates.Domain\CurrencyExchangeRates.Domain.csproj" />
     <ProjectReference Include="..\CurrencyExchangeRates.Infrastructure\CurrencyExchangeRates.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\" />
   </ItemGroup>
 
 </Project>
