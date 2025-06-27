@@ -29,8 +29,8 @@ namespace CurrencyExchangeRates.Tests
             var rates = await gateway.GetDailyRatesAsync();
 
             // Assert
-            Assert.Contains(rates, r => r.Currency == "USD" && r.Rate == 1.10m);
-            Assert.Contains(rates, r => r.Currency == "GBP" && r.Rate == 0.85m);
+            Assert.Contains(rates, r => r.CurrencyCode == "USD" && r.Rate == 1.10m);
+            Assert.Contains(rates, r => r.CurrencyCode == "GBP" && r.Rate == 0.85m);
         }
     }
     public class FakeHttpMessageHandler : HttpMessageHandler

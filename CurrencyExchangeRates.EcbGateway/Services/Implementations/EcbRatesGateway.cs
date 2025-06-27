@@ -1,11 +1,6 @@
-﻿using CurrencyExchangeRates.EcbGateway.Models;
+﻿using CurrencyExchangeRates.Domain.Entities;
 using CurrencyExchangeRates.EcbGateway.Services.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace CurrencyExchangeRates.EcbGateway.Services.Implementations
@@ -39,7 +34,7 @@ namespace CurrencyExchangeRates.EcbGateway.Services.Implementations
             var rates = timeCube.Elements()
                 .Select(x => new CurrencyRate
                 {
-                    Currency = x.Attribute("currency")?.Value,
+                    CurrencyCode = x.Attribute("currency")?.Value,
                     Rate = decimal.Parse(
                         x.Attribute("rate")?.Value ?? "0",
                         NumberStyles.Any,

@@ -26,7 +26,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CurrencyExchangeRates.Application\CurrencyExchangeRates.Application.csproj" />
-    <ProjectReference Include="..\CurrencyExchangeRates.Domain\CurrencyExchangeRates.Domain.csproj" />
     <ProjectReference Include="..\CurrencyExchangeRates.EcbGateway\CurrencyExchangeRates.EcbGateway.csproj" />
   </ItemGroup>
 

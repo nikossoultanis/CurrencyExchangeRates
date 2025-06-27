@@ -24,23 +24,23 @@ namespace CurrencyExchangeRates.Application.Common.Jobs.Implementaions
             var rates = await _ecbRateGateway.GetDailyRatesAsync(cancellationToken);
 
             var rows = rates.Select(r =>
-                $"('{r.Currency}', {r.Rate.ToString(System.Globalization.CultureInfo.InvariantCulture)}, '{r.Date:yyyy-MM-dd}')"
+                $"('{r.CurrencyCode}', {r.Rate.ToString(System.Globalization.CultureInfo.InvariantCulture)}, '{r.Date:yyyy-MM-dd}')"
             );
 
             var valuesSql = string.Join(",", rows);
 
             var sql = $@"
-            MERGE INTO CurrencyRates AS Target
-            USING
-            (
-                VALUES {valuesSql}
-            ) AS Source (CurrencyCode, Rate, Date)
-            ON Target.CurrencyCode = Source.CurrencyCode AND Target.Date = Source.Date
-            WHEN MATCHED THEN
-                UPDATE SET Rate = Source.Rate
-            WHEN NOT MATCHED THEN
-                INSERT (CurrencyCode, Rate, Date)
-                VALUES (Source.CurrencyCode, Source.Rate, Source.Date);";
+                        MERGE INTO CurrencyRates AS Target
+                        USING
+                        (
+                            VALUES {valuesSql}
+                        ) AS Source (CurrencyCode, Rate, Date)
+                        ON Target.CurrencyCode = Source.CurrencyCode AND Target.Date = Source.Date
+                        WHEN MATCHED THEN
+                            UPDATE SET Rate = Source.Rate
+                        WHEN NOT MATCHED THEN
+                            INSERT (CurrencyCode, Rate, Date)
+                            VALUES (Source.CurrencyCode, Source.Rate, Source.Date);";
 
             await _dbContext.Database.ExecuteSqlRawAsync(sql, cancellationToken);
         }

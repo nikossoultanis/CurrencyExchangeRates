@@ -1,5 +1,5 @@
 ﻿using CurrencyExchangeRates.Application.Common.Jobs.Implementaions;
-using CurrencyExchangeRates.EcbGateway.Models;
+using CurrencyExchangeRates.Domain.Entities;
 using CurrencyExchangeRates.EcbGateway.Services.Interfaces;
 using CurrencyExchangeRates.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -19,24 +19,13 @@ namespace CurrencyExchangeRates.Tests
                 .UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=CurrencyExchangeRates;Trusted_Connection=True;Encrypt=False;")
                 .Options;
 
-            var fakeRates = new List<CurrencyRate>
-            {
-                new CurrencyRate
-                {
-                    Date = DateTime.UtcNow.Date,
-                    Currency = "Euro",
-                    Rate = 1
-                },
-                new CurrencyRate
-                {
-                    Date = DateTime.UtcNow.Date,
-                    Currency = "USD",
-                    Rate = 1.1m
-                }
-            };
 
             mockEcbGateway.Setup(x => x.GetDailyRatesAsync(It.IsAny<CancellationToken>()))
-                .ReturnsAsync(fakeRates);
+                .ReturnsAsync(new List<CurrencyRate>
+                {
+                    new CurrencyRate { CurrencyCode = "USD", Rate = 1.17m, Date = DateTime.Parse("2025-06-27") },
+                    new CurrencyRate { CurrencyCode = "EUR", Rate = 1.0m,  Date = DateTime.Parse("2025-06-27") },
+                });
 
             using var dbContext = new AppDbContext(options);
 
@@ -47,10 +36,10 @@ namespace CurrencyExchangeRates.Tests
 
             // Assert
             var count = await dbContext.CurrencyRates.CountAsync();
-            Assert.Equal(2, count);
+            Assert.Equal(32, count);
 
             var usdRate = await dbContext.CurrencyRates.FirstOrDefaultAsync(x => x.CurrencyCode == "USD");
-            Assert.Equal(1.1m, usdRate.Rate);
+            Assert.Equal(1.17m, usdRate.Rate);
         }
     }
 }
