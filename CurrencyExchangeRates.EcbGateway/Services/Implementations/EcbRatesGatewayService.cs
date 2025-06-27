@@ -43,6 +43,12 @@ namespace CurrencyExchangeRates.EcbGateway.Services.Implementations
                 })
                 .ToList();
 
+            rates.Add(new CurrencyRate
+            {
+                CurrencyCode = "EUR",
+                Rate = 1.0m,
+                Date = DateTime.UtcNow.Date
+            });
             return rates;
         }
     }

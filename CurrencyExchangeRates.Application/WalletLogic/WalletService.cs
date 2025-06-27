@@ -35,7 +35,14 @@ namespace CurrencyExchangeRates.Application.Domain.Entities.WalletLogic
         }
 
         public async Task<Wallet> CreateWalletAsync(string currency)
-        {
+        {    
+            var rate = await _currencyRateService.GetLatestRateAsync(currency);
+
+            if (rate == null)
+            {
+                throw new ArgumentException($"Currency '{currency}' is not supported.");
+            }
+
             var wallet = new Wallet(currency);
             return await _walletRepository.CreateAsync(wallet);
         }
@@ -44,6 +51,11 @@ namespace CurrencyExchangeRates.Application.Domain.Entities.WalletLogic
         {
             var wallet = await _walletRepository.GetByIdAsync(walletId)
                 ?? throw new KeyNotFoundException("Wallet not found.");
+
+            if (requestedCurrency != null)
+            {
+                var rate = await _currencyRateService.GetLatestRateAsync(requestedCurrency) ?? throw new ArgumentException($"Currency '{requestedCurrency}' is not supported.");
+            }
 
             if (string.IsNullOrWhiteSpace(requestedCurrency)
                 || requestedCurrency.Equals(wallet.Currency, StringComparison.OrdinalIgnoreCase))
@@ -92,9 +104,7 @@ namespace CurrencyExchangeRates.Application.Domain.Entities.WalletLogic
             if (walletCurrencyRate == null || amountCurrencyRate == null)
                 throw new Exception("Currency rate not available for conversion.");
 
-            // amount in EUR
             var amountInEur = amount / amountCurrencyRate.Rate;
-            // converted to wallet currency
             var convertedAmount = amountInEur * walletCurrencyRate.Rate;
 
             var balance = wallet.Balance;

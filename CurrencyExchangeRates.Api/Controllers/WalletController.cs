@@ -17,8 +17,19 @@ namespace CurrencyExchangeRates.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromQuery] string currency)
         {
-            var wallet = await _walletService.CreateWalletAsync(currency);
-            return Ok(wallet);
+            try
+            {
+                var wallet = await _walletService.CreateWalletAsync(currency);
+                return Ok(wallet);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "An unexpected error occurred." });
+            }
         }
 
         [HttpGet("{id}/balance")]
