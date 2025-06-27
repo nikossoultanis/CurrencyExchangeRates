@@ -3,22 +3,20 @@ using CurrencyExchangeRates.Application.WalletLogic;
 using CurrencyExchangeRates.Domain.CurrencyRateRepository;
 using CurrencyExchangeRates.Domain.Entities;
 using CurrencyExchangeRates.Domain.WalletRepository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace CurrencyExchangeRates.Application.Domain.Entities.WalletLogic
 {
     public class WalletService
     {
+        private readonly ILogger<WalletService> _logger;
         private readonly IWalletRepository _walletRepository;
         private readonly ICurrencyRateRepository _currencyRateRepository;
         private readonly IDictionary<string, IFundsAdjustmentStrategy> _strategies;
         private readonly ICurrencyRateService _currencyRateService;
 
         public WalletService(
+            ILogger<WalletService> logger,
             IWalletRepository walletRepository,
             ICurrencyRateRepository currencyRateRepository,
             IEnumerable<IFundsAdjustmentStrategy> strategies,
@@ -32,25 +30,36 @@ namespace CurrencyExchangeRates.Application.Domain.Entities.WalletLogic
                 _strategies[strategy.GetType().Name] = strategy;
             }
             _currencyRateService = currencyRateService;
+            _logger = logger;
         }
 
         public async Task<Wallet> CreateWalletAsync(string currency)
-        {    
+        {
+            _logger.LogInformation("Creating new wallet in currency", currency);
+
             var rate = await _currencyRateService.GetLatestRateAsync(currency);
 
             if (rate == null)
             {
+                _logger.LogWarning("Currency {Currency} not supported", currency);
                 throw new ArgumentException($"Currency '{currency}' is not supported.");
             }
 
             var wallet = new Wallet(currency);
-            return await _walletRepository.CreateAsync(wallet);
+
+            var result = await _walletRepository.CreateAsync(wallet);
+            _logger.LogInformation("Wallet {WalletId} created", result.Id);
+            return result;
         }
 
         public async Task<decimal> GetBalanceAsync(long walletId, string? requestedCurrency = null)
         {
-            var wallet = await _walletRepository.GetByIdAsync(walletId)
-                ?? throw new KeyNotFoundException("Wallet not found.");
+            var wallet = await _walletRepository.GetByIdAsync(walletId);
+            if (wallet == null)
+            {
+                _logger.LogWarning("Currency {Currency} not supported", requestedCurrency);
+                throw new KeyNotFoundException("Wallet not found."); 
+            }
 
             if (requestedCurrency != null)
             {
@@ -70,13 +79,22 @@ namespace CurrencyExchangeRates.Application.Domain.Entities.WalletLogic
             var requestedCurrencyRate = await _currencyRateService.GetLatestRateAsync(requestedCurrencyNormalized);
 
             if (walletCurrencyRate == null)
-                throw new Exception($"Exchange rate not found for wallet currency '{walletCurrencyNormalized}'.");
+            {
+                _logger.LogWarning("Exchange rate not found for wallet currency ", requestedCurrency);
+                throw new Exception($"Exchange rate not found for wallet currency '{walletCurrencyNormalized}'."); 
+            }
 
             if (requestedCurrencyRate == null)
-                throw new Exception($"Exchange rate not found for requested currency '{requestedCurrencyNormalized}'.");
+            {
+                _logger.LogWarning("Exchange rate not found for requested currency ", requestedCurrency);
+                throw new Exception($"Exchange rate not found for requested currency '{requestedCurrencyNormalized}'."); 
+            }
 
             if (walletCurrencyRate.Rate == 0)
-                throw new Exception($"Invalid exchange rate (zero) for wallet currency '{walletCurrencyNormalized}'.");
+            { 
+                _logger.LogWarning("Invalid exchange rate (zero) for wallet currency ", requestedCurrency); 
+                throw new Exception($"Invalid exchange rate (zero) for wallet currency '{walletCurrencyNormalized}'."); 
+            }
 
             // Convert balance from wallet currency -> EUR
             var balanceInEur = wallet.Balance / walletCurrencyRate.Rate;
@@ -95,14 +113,20 @@ namespace CurrencyExchangeRates.Application.Domain.Entities.WalletLogic
 
             var strategyKey = strategyName + "Strategy";
             if (!_strategies.TryGetValue(strategyKey, out var strategy))
-                throw new ArgumentException($"Strategy '{strategyName}' is not supported.");
+            {
+                _logger.LogWarning($"Strategy '{strategyName}' is not supported.", currency);
+                throw new ArgumentException($"Strategy '{strategyName}' is not supported."); 
+            }
 
             // Convert amount to wallet currency
             var walletCurrencyRate = await _currencyRateRepository.GetCurrencyRateAsync(wallet.Currency);
             var amountCurrencyRate = await _currencyRateRepository.GetCurrencyRateAsync(currency);
 
             if (walletCurrencyRate == null || amountCurrencyRate == null)
-                throw new Exception("Currency rate not available for conversion.");
+            {
+                _logger.LogWarning($"Currency rate not available for conversion.");
+                throw new Exception("Currency rate not available for conversion."); 
+            }
 
             var amountInEur = amount / amountCurrencyRate.Rate;
             var convertedAmount = amountInEur * walletCurrencyRate.Rate;

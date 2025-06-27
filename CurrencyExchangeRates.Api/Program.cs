@@ -1,4 +1,5 @@
 using CurrencyExchangeRates.Infrastructure.DepedencyInjection;
+using Microsoft.AspNetCore.Diagnostics;
 using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,6 +38,27 @@ builder.Services.AddRateLimiter(options =>
 });
 var app = builder.Build();
 
+app.UseExceptionHandler(builder =>
+{
+    builder.Run(async context =>
+    {
+        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+
+        var feature = context.Features.Get<IExceptionHandlerPathFeature>();
+        var exception = feature?.Error;
+
+        logger.LogError(exception, "Unhandled exception occurred: {Message}", exception?.Message);
+
+        context.Response.ContentType = "application/json";
+
+        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        await context.Response.WriteAsJsonAsync(new
+        {
+            error = "An unexpected error occurred."
+        });
+        
+    });
+});
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
