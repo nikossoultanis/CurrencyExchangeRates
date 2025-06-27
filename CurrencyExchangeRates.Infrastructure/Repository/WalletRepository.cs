@@ -1,4 +1,4 @@
-﻿using CurrencyExchangeRates.Domain.WalletRepository;
+﻿using CurrencyExchangeRates.Domain.Repositories;
 using CurrencyExchangeRates.Infrastructure.Persistence;
 
 namespace CurrencyExchangeRates.Infrastructure.Repository

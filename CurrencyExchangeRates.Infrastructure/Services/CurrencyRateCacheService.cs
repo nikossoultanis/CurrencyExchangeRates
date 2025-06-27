@@ -1,6 +1,6 @@
 ﻿using CurrencyExchangeRates.Application.Common.Interfaces;
-using CurrencyExchangeRates.Domain.CurrencyRateRepository;
 using CurrencyExchangeRates.Domain.Entities;
+using CurrencyExchangeRates.Domain.Repositories;
 using Microsoft.Extensions.Caching.Memory;
 
 

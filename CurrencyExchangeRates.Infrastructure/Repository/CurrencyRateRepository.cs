@@ -1,5 +1,5 @@
-﻿using CurrencyExchangeRates.Domain.CurrencyRateRepository;
-using CurrencyExchangeRates.Domain.Entities;
+﻿using CurrencyExchangeRates.Domain.Entities;
+using CurrencyExchangeRates.Domain.Repositories;
 using CurrencyExchangeRates.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 

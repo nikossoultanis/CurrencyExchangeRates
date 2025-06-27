@@ -1,8 +1,7 @@
 ﻿using CurrencyExchangeRates.Application.Common.Interfaces;
 using CurrencyExchangeRates.Application.WalletLogic;
-using CurrencyExchangeRates.Domain.CurrencyRateRepository;
 using CurrencyExchangeRates.Domain.Entities;
-using CurrencyExchangeRates.Domain.WalletRepository;
+using CurrencyExchangeRates.Domain.Repositories;
 using Microsoft.Extensions.Logging;
 
 namespace CurrencyExchangeRates.Application.Domain.Entities.WalletLogic

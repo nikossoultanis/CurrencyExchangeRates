@@ -1,6 +1,6 @@
 ﻿using CurrencyExchangeRates.Domain.Entities;
 
-namespace CurrencyExchangeRates.Domain.CurrencyRateRepository
+namespace CurrencyExchangeRates.Domain.Repositories
 {
     public interface ICurrencyRateRepository
     {

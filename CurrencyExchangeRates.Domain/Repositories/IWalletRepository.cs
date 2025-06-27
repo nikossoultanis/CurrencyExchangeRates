@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CurrencyExchangeRates.Domain.WalletRepository
+namespace CurrencyExchangeRates.Domain.Repositories
 {
     public interface IWalletRepository
     {
