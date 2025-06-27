@@ -9,6 +9,6 @@ namespace CurrencyExchangeRates.EcbGateway.Services.Interfaces
 {
     public interface IEcbRatesGateway
     {
-        Task<IEnumerable<CurrencyRate>> GetDailyRatesAsync();
+        Task<List<CurrencyRate>> GetDailyRatesAsync(CancellationToken cancellationToken = default);
     }
 }

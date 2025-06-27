@@ -20,7 +20,7 @@ namespace CurrencyExchangeRates.EcbGateway.Services.Implementations
             _httpClient = httpClient;
         }
 
-        public async Task<IEnumerable<CurrencyRate>> GetDailyRatesAsync()
+        public async Task<List<CurrencyRate>> GetDailyRatesAsync(CancellationToken cancellationToken = default)
         {
             var xml = await _httpClient.GetStringAsync(EcbUrl);
 
