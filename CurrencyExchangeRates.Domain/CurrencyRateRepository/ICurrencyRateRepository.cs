@@ -4,6 +4,7 @@ namespace CurrencyExchangeRates.Domain.CurrencyRateRepository
 {
     public interface ICurrencyRateRepository
     {
-        Task<CurrencyRate?> GetLatestRateAsync(string currency);
+        Task<List<CurrencyRate>> GetLatestRatesAsync();
+        Task<CurrencyRate?> GetCurrencyRateAsync(string currency);
     }
 }

@@ -14,7 +14,12 @@ namespace CurrencyExchangeRates.Infrastructure.Repository
             _dbContext = dbContext;
         }
 
-        public async Task<CurrencyRate?> GetLatestRateAsync(string currency)
+        public  async Task<List<CurrencyRate>> GetLatestRatesAsync()
+        {
+            return await _dbContext.CurrencyRates.ToListAsync();
+        }
+
+        public async Task<CurrencyRate?> GetCurrencyRateAsync(string currency)
         {
             return await _dbContext.CurrencyRates
                 .FirstOrDefaultAsync(r => r.CurrencyCode == currency);
