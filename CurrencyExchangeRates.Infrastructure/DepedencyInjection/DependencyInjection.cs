@@ -1,6 +1,5 @@
 ﻿using CurrencyExchangeRates.Application.Common.Interfaces;
 using CurrencyExchangeRates.Application.Common.Jobs.Implementaions;
-using CurrencyExchangeRates.Application.Common.Jobs.Interfaces;
 using CurrencyExchangeRates.Application.Common.Services;
 using CurrencyExchangeRates.Application.WalletLogic;
 using CurrencyExchangeRates.Domain.Repositories;

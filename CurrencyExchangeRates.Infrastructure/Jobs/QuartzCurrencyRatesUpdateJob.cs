@@ -1,4 +1,4 @@
-﻿using CurrencyExchangeRates.Application.Common.Jobs.Interfaces;
+﻿using CurrencyExchangeRates.Application.Common.Interfaces;
 using Quartz;
 
 namespace CurrencyExchangeRates.Infrastructure.Jobs

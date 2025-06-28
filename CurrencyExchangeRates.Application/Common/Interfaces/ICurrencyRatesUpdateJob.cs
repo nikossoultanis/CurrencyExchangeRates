@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CurrencyExchangeRates.Application.Common.Jobs.Interfaces
+namespace CurrencyExchangeRates.Application.Common.Interfaces
 {
     public interface ICurrencyRatesUpdateJob
     {

@@ -1,5 +1,4 @@
 ﻿using CurrencyExchangeRates.Application.Common.Interfaces;
-using CurrencyExchangeRates.Application.Common.Jobs.Interfaces;
 using CurrencyExchangeRates.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
