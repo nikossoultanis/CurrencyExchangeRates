@@ -3,6 +3,7 @@ using CurrencyExchangeRates.Application.Common.Jobs.Implementaions;
 using CurrencyExchangeRates.Application.Common.Services;
 using CurrencyExchangeRates.Application.WalletLogic;
 using CurrencyExchangeRates.Domain.Repositories;
+using CurrencyExchangeRates.Infrastructure.Configuration;
 using CurrencyExchangeRates.Infrastructure.Gateways;
 using CurrencyExchangeRates.Infrastructure.Jobs;
 using CurrencyExchangeRates.Infrastructure.Persistence;

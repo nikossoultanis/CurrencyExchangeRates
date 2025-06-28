@@ -1,5 +1,7 @@
-﻿using CurrencyExchangeRates.Domain.Entities;
-using CurrencyExchangeRates.Application.Common.Interfaces;
+﻿using CurrencyExchangeRates.Application.Common.Interfaces;
+using CurrencyExchangeRates.Domain.Entities;
+using CurrencyExchangeRates.Infrastructure.Configuration;
+using Microsoft.Extensions.Options;
 using System.Globalization;
 using System.Xml.Linq;
 
@@ -8,17 +10,19 @@ namespace CurrencyExchangeRates.Infrastructure.Gateways
     public class EcbGateway : ICurrencyGateway
     {
         private readonly HttpClient _httpClient;
-        private const string EcbUrl = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
+        private readonly string _ecbUrl;
         public string GatewayProviderName => "ECB";
 
-        public EcbGateway(HttpClient httpClient)
+        public EcbGateway(HttpClient httpClient,
+            IOptions<EcbGatewayOptions> options)
         {
             _httpClient = httpClient;
+            _ecbUrl = options.Value.Url;
         }
 
         public async Task<List<CurrencyRate>> GetDailyRatesAsync(CancellationToken cancellationToken = default)
         {
-            var xml = await _httpClient.GetStringAsync(EcbUrl);
+            var xml = await _httpClient.GetStringAsync(_ecbUrl);
 
             var xdoc = XDocument.Parse(xml);
             var ns = xdoc.Root.GetDefaultNamespace();
