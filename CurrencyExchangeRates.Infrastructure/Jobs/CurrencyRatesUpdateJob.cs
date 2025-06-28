@@ -1,37 +1,49 @@
-﻿using CurrencyExchangeRates.Application.Common.Interfaces;
+﻿using Castle.Core.Logging;
+using CurrencyExchangeRates.Application.Common.Interfaces;
 using CurrencyExchangeRates.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System.Numerics;
 
 namespace CurrencyExchangeRates.Application.Common.Jobs.Implementaions
 {
 
     public class CurrencyRatesUpdateJob : ICurrencyRatesUpdateJob
     {
-        private readonly IGatewayService _ratesGateway;
+        private readonly ICurrencyGateway _ratesGateway;
+        private readonly ICurrencyGatewayFactory _gatewayFactory;
         private readonly AppDbContext _dbContext;
         private readonly ICurrencyRateService _currencyRateService;
+        private readonly ILogger<ICurrencyRatesUpdateJob> _logger;
 
         public CurrencyRatesUpdateJob(
-            IGatewayService rateGateway,
+            ICurrencyGatewayFactory gatewayFactory, 
+            ICurrencyGateway rateGateway,
             AppDbContext dbContext,
-            ICurrencyRateService currencyRateService)
+            ICurrencyRateService currencyRateService,
+            ILogger<ICurrencyRatesUpdateJob> logger)
         {
+            _gatewayFactory = gatewayFactory;
             _ratesGateway = rateGateway;
             _dbContext = dbContext;
             _currencyRateService = currencyRateService;
+            _logger = logger;
         }
 
-        public async Task ExecuteAsync(CancellationToken cancellationToken)
+        public async Task ExecuteAsync(CancellationToken cancellationToken, string providerName = "ECB")
         {
-            var rates = await _ratesGateway.GetDailyRatesAsync(cancellationToken);
+            try
+            {
+                var gateway = _gatewayFactory.GetGateway(providerName);
+                var rates = await gateway.GetDailyRatesAsync(cancellationToken);
 
-            var rows = rates.Select(r =>
-                $"('{r.CurrencyCode}', {r.Rate.ToString(System.Globalization.CultureInfo.InvariantCulture)}, '{r.Date:yyyy-MM-dd}')"
-            );
+                var rows = rates.Select(r =>
+                    $"('{r.CurrencyCode}', {r.Rate.ToString(System.Globalization.CultureInfo.InvariantCulture)}, '{r.Date:yyyy-MM-dd}')"
+                );
 
-            var valuesSql = string.Join(",", rows);
+                var valuesSql = string.Join(",", rows);
 
-            var sql = $@"
+                var sql = $@"
                         MERGE INTO CurrencyRates AS Target
                         USING
                         (
@@ -44,8 +56,13 @@ namespace CurrencyExchangeRates.Application.Common.Jobs.Implementaions
                             INSERT (CurrencyCode, Rate, Date)
                             VALUES (Source.CurrencyCode, Source.Rate, Source.Date);";
 
-            var completed = await _dbContext.Database.ExecuteSqlRawAsync(sql, cancellationToken);
-            _currencyRateService.SetRatesAsync(rates);
+                var completed = await _dbContext.Database.ExecuteSqlRawAsync(sql, cancellationToken);
+                _currencyRateService.SetRatesAsync(rates);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.Message);
+            }
         }
     }
 }

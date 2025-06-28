@@ -23,7 +23,9 @@ namespace CurrencyExchangeRates.Infrastructure.DepedencyInjection
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             // Register ECB Gateway
-            services.AddHttpClient<IGatewayService, EcbGateway>();
+            services.AddHttpClient<ICurrencyGateway, EcbGateway>();
+            services.AddScoped<ICurrencyGatewayFactory, CurrencyGatewayFactory>();
+
             services.AddScoped<CurrencyRateService>();
 
             services.AddScoped<ICurrencyRatesUpdateJob, CurrencyRatesUpdateJob>();

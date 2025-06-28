@@ -14,7 +14,7 @@ namespace CurrencyExchangeRates.Tests
         public async Task ExecuteAsync_UpdatesDatabase()
         {
             // Arrange
-            var mockEcbGateway = new Mock<IGatewayService>();
+            var mockEcbGateway = new Mock<ICurrencyGateway>();
             var mockCurrencyRateService = new Mock<ICurrencyRateService>();
             var options = new DbContextOptionsBuilder<AppDbContext>()
                 .UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=CurrencyExchangeRates;Trusted_Connection=True;Encrypt=False;")
@@ -37,7 +37,7 @@ namespace CurrencyExchangeRates.Tests
 
             // Assert
             var count = await dbContext.CurrencyRates.CountAsync();
-            Assert.Equal(32, count);
+            Assert.Equal(33, count);
 
             var usdRate = await dbContext.CurrencyRates.FirstOrDefaultAsync(x => x.CurrencyCode == "USD");
             Assert.Equal(1.17m, usdRate.Rate);

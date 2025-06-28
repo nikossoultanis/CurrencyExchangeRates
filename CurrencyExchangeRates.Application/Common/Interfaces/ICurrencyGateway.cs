@@ -2,8 +2,9 @@
 
 namespace CurrencyExchangeRates.Application.Common.Interfaces
 {
-    public interface IGatewayService
+    public interface ICurrencyGateway
     {
+        string GatewayProviderName { get; }
         Task<List<CurrencyRate>> GetDailyRatesAsync(CancellationToken cancellationToken = default);
     }
 }

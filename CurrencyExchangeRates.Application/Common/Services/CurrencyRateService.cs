@@ -5,16 +5,25 @@ namespace CurrencyExchangeRates.Application.Common.Services
 {
     public class CurrencyRateService
     {
-        private readonly IGatewayService _gateway;
+        private readonly ICurrencyGatewayFactory _gatewayFactory;
 
-        public CurrencyRateService(IGatewayService gateway)
+        public CurrencyRateService(ICurrencyGatewayFactory gateway)
         {
-            _gateway = gateway;
+            _gatewayFactory = gateway;
         }
 
-        public async Task<List<CurrencyRate>> GetRatesAsync()
+        public async Task<List<CurrencyRate>> GetRatesAsync(string providerName)
         {
-            return await _gateway.GetDailyRatesAsync();
+            try
+            {
+                var gateway = _gatewayFactory.GetGateway(providerName);
+                return await gateway.GetDailyRatesAsync();
+            }
+            catch (Exception ex)
+            {
+                return new List<CurrencyRate>();
+            }
+
         }
     }
 }

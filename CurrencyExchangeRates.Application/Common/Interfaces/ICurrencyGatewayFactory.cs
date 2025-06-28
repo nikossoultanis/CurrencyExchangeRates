@@ -6,8 +6,12 @@ using System.Threading.Tasks;
 
 namespace CurrencyExchangeRates.Application.Common.Interfaces
 {
-    public interface ICurrencyRatesUpdateJob
+    public interface ICurrencyGatewayFactory
     {
-        Task ExecuteAsync(CancellationToken cancellationToken, string providerName = "ECB");
+        ICurrencyGateway GetGateway(string providerName);
     }
 }
+
+
+
+

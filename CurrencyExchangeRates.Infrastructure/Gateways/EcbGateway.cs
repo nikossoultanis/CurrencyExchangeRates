@@ -1,19 +1,15 @@
 ﻿using CurrencyExchangeRates.Domain.Entities;
 using CurrencyExchangeRates.Application.Common.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace CurrencyExchangeRates.Infrastructure.Gateways
 {
-    public class EcbGateway : IGatewayService
+    public class EcbGateway : ICurrencyGateway
     {
         private readonly HttpClient _httpClient;
         private const string EcbUrl = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
+        public string GatewayProviderName => "ECB";
 
         public EcbGateway(HttpClient httpClient)
         {
