@@ -1,16 +1,21 @@
 ﻿using CurrencyExchangeRates.Domain.Entities;
-using CurrencyExchangeRates.EcbGateway.Services.Interfaces;
+using CurrencyExchangeRates.Application.Common.Interfaces;
+using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace CurrencyExchangeRates.EcbGateway.Services.Implementations
+namespace CurrencyExchangeRates.Infrastructure.Gateways
 {
-    public class EcbRatesGatewayService : IGatewayService
+    public class EcbGateway : IGatewayService
     {
         private readonly HttpClient _httpClient;
         private const string EcbUrl = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
 
-        public EcbRatesGatewayService(HttpClient httpClient)
+        public EcbGateway(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
@@ -49,6 +54,7 @@ namespace CurrencyExchangeRates.EcbGateway.Services.Implementations
                 Rate = 1.0m,
                 Date = DateTime.UtcNow.Date
             });
+            
             return rates;
         }
     }

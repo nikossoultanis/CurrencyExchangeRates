@@ -1,7 +1,6 @@
 ﻿using CurrencyExchangeRates.Application.Common.Interfaces;
 using CurrencyExchangeRates.Application.Common.Jobs.Implementaions;
 using CurrencyExchangeRates.Domain.Entities;
-using CurrencyExchangeRates.EcbGateway.Services.Interfaces;
 using CurrencyExchangeRates.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -15,7 +14,7 @@ namespace CurrencyExchangeRates.Tests
         public async Task ExecuteAsync_UpdatesDatabase()
         {
             // Arrange
-            var mockEcbGateway = new Mock<IEcbRatesGatewayService>();
+            var mockEcbGateway = new Mock<IGatewayService>();
             var mockCurrencyRateService = new Mock<ICurrencyRateService>();
             var options = new DbContextOptionsBuilder<AppDbContext>()
                 .UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=CurrencyExchangeRates;Trusted_Connection=True;Encrypt=False;")

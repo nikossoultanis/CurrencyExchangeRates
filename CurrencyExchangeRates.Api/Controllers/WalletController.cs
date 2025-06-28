@@ -1,4 +1,4 @@
-﻿using CurrencyExchangeRates.Application.Domain.Entities.WalletLogic;
+﻿using CurrencyExchangeRates.Application.Common.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CurrencyExchangeRates.Api.Controllers

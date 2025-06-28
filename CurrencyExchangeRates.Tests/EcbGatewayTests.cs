@@ -1,4 +1,4 @@
-using CurrencyExchangeRates.EcbGateway.Services.Implementations;
+using CurrencyExchangeRates.Infrastructure.Gateways;
 using System.Net;
 
 namespace CurrencyExchangeRates.Tests
@@ -23,7 +23,7 @@ namespace CurrencyExchangeRates.Tests
             var handler = new FakeHttpMessageHandler(fakeXml);
             var httpClient = new HttpClient(handler);
 
-            var gateway = new EcbRatesGatewayService(httpClient);
+            var gateway = new EcbGateway(httpClient);
 
             // Act
             var rates = await gateway.GetDailyRatesAsync();

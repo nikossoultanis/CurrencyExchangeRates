@@ -4,7 +4,7 @@ using CurrencyExchangeRates.Domain.Entities;
 using CurrencyExchangeRates.Domain.Repositories;
 using Microsoft.Extensions.Logging;
 
-namespace CurrencyExchangeRates.Application.Domain.Entities.WalletLogic
+namespace CurrencyExchangeRates.Application.Common.Services
 {
     public class WalletService
     {

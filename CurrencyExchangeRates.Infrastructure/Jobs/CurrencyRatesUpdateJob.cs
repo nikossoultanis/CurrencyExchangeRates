@@ -1,6 +1,5 @@
 ﻿using CurrencyExchangeRates.Application.Common.Interfaces;
 using CurrencyExchangeRates.Application.Common.Jobs.Interfaces;
-using CurrencyExchangeRates.EcbGateway.Services.Interfaces;
 using CurrencyExchangeRates.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,23 +8,23 @@ namespace CurrencyExchangeRates.Application.Common.Jobs.Implementaions
 
     public class CurrencyRatesUpdateJob : ICurrencyRatesUpdateJob
     {
-        private readonly IEcbRatesGatewayService _ecbRateGateway;
+        private readonly IGatewayService _ratesGateway;
         private readonly AppDbContext _dbContext;
         private readonly ICurrencyRateService _currencyRateService;
 
         public CurrencyRatesUpdateJob(
-            IEcbRatesGatewayService ecbRateGateway,
+            IGatewayService rateGateway,
             AppDbContext dbContext,
             ICurrencyRateService currencyRateService)
         {
-            _ecbRateGateway = ecbRateGateway;
+            _ratesGateway = rateGateway;
             _dbContext = dbContext;
             _currencyRateService = currencyRateService;
         }
 
         public async Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            var rates = await _ecbRateGateway.GetDailyRatesAsync(cancellationToken);
+            var rates = await _ratesGateway.GetDailyRatesAsync(cancellationToken);
 
             var rows = rates.Select(r =>
                 $"('{r.CurrencyCode}', {r.Rate.ToString(System.Globalization.CultureInfo.InvariantCulture)}, '{r.Date:yyyy-MM-dd}')"

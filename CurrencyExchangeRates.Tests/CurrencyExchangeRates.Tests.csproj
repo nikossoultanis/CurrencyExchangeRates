@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CurrencyExchangeRates.EcbGateway\CurrencyExchangeRates.EcbGateway.csproj" />
     <ProjectReference Include="..\CurrencyExchangeRates.Infrastructure\CurrencyExchangeRates.Infrastructure.csproj" />
   </ItemGroup>
 

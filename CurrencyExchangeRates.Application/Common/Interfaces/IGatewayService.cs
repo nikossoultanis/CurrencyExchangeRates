@@ -1,8 +1,8 @@
 ﻿using CurrencyExchangeRates.Domain.Entities;
 
-namespace CurrencyExchangeRates.EcbGateway.Services.Interfaces
+namespace CurrencyExchangeRates.Application.Common.Interfaces
 {
-    public interface IEcbRatesGatewayService
+    public interface IGatewayService
     {
         Task<List<CurrencyRate>> GetDailyRatesAsync(CancellationToken cancellationToken = default);
     }

@@ -1,11 +1,10 @@
 ﻿using CurrencyExchangeRates.Application.Common.Interfaces;
 using CurrencyExchangeRates.Application.Common.Jobs.Implementaions;
 using CurrencyExchangeRates.Application.Common.Jobs.Interfaces;
-using CurrencyExchangeRates.Application.Domain.Entities.WalletLogic;
+using CurrencyExchangeRates.Application.Common.Services;
 using CurrencyExchangeRates.Application.WalletLogic;
 using CurrencyExchangeRates.Domain.Repositories;
-using CurrencyExchangeRates.EcbGateway.Services.Implementations;
-using CurrencyExchangeRates.EcbGateway.Services.Interfaces;
+using CurrencyExchangeRates.Infrastructure.Gateways;
 using CurrencyExchangeRates.Infrastructure.Jobs;
 using CurrencyExchangeRates.Infrastructure.Persistence;
 using CurrencyExchangeRates.Infrastructure.Repository;
@@ -25,7 +24,8 @@ namespace CurrencyExchangeRates.Infrastructure.DepedencyInjection
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             // Register ECB Gateway
-            services.AddHttpClient<IEcbRatesGatewayService, EcbRatesGatewayService>();
+            services.AddHttpClient<IGatewayService, EcbGateway>();
+            services.AddScoped<CurrencyRateService>();
 
             services.AddScoped<ICurrencyRatesUpdateJob, CurrencyRatesUpdateJob>();
 
