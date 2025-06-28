@@ -1,4 +1,6 @@
+using CurrencyExchangeRates.Infrastructure.Configuration;
 using CurrencyExchangeRates.Infrastructure.Gateways;
+using Microsoft.Extensions.Options;
 using System.Net;
 
 namespace CurrencyExchangeRates.Tests
@@ -22,8 +24,11 @@ namespace CurrencyExchangeRates.Tests
 
             var handler = new FakeHttpMessageHandler(fakeXml);
             var httpClient = new HttpClient(handler);
-
-            var gateway = new EcbGateway(httpClient);
+            var options = Options.Create(new EcbGatewayOptions
+            {
+                Url = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml"
+            });
+            var gateway = new EcbGateway(httpClient, options);
 
             // Act
             var rates = await gateway.GetDailyRatesAsync();

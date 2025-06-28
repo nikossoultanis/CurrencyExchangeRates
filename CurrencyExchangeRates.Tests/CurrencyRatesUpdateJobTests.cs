@@ -1,8 +1,10 @@
-﻿using CurrencyExchangeRates.Application.Common.Interfaces;
+﻿using Castle.Core.Logging;
+using CurrencyExchangeRates.Application.Common.Interfaces;
 using CurrencyExchangeRates.Application.Common.Jobs.Implementaions;
 using CurrencyExchangeRates.Domain.Entities;
 using CurrencyExchangeRates.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -15,7 +17,10 @@ namespace CurrencyExchangeRates.Tests
         {
             // Arrange
             var mockEcbGateway = new Mock<ICurrencyGateway>();
+            var mockEcbGatewayFactory = new Mock<ICurrencyGatewayFactory>();
+
             var mockCurrencyRateService = new Mock<ICurrencyRateService>();
+            var mockLogger = new Mock<ILogger<ICurrencyRatesUpdateJob>>();
             var options = new DbContextOptionsBuilder<AppDbContext>()
                 .UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=CurrencyExchangeRates;Trusted_Connection=True;Encrypt=False;")
                 .Options;
@@ -30,7 +35,7 @@ namespace CurrencyExchangeRates.Tests
 
             using var dbContext = new AppDbContext(options);
 
-            var job = new CurrencyRatesUpdateJob(mockEcbGateway.Object, dbContext, mockCurrencyRateService.Object);
+            var job = new CurrencyRatesUpdateJob(mockEcbGatewayFactory.Object, mockEcbGateway.Object, dbContext, mockCurrencyRateService.Object, mockLogger.Object);
 
             // Act
             await job.ExecuteAsync(CancellationToken.None);
