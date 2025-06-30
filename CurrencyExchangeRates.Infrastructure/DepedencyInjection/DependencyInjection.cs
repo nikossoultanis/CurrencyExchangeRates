@@ -1,5 +1,7 @@
-﻿using CurrencyExchangeRates.Application.Common.Interfaces;
+﻿using CurrencyExchangeRates.Application.Common.CQRS.Queries;
+using CurrencyExchangeRates.Application.Common.Interfaces;
 using CurrencyExchangeRates.Application.Common.Jobs.Implementaions;
+using CurrencyExchangeRates.Application.Common.PipelineValidator;
 using CurrencyExchangeRates.Application.Common.Services;
 using CurrencyExchangeRates.Application.WalletLogic;
 using CurrencyExchangeRates.Domain.Repositories;
@@ -9,6 +11,8 @@ using CurrencyExchangeRates.Infrastructure.Jobs;
 using CurrencyExchangeRates.Infrastructure.Persistence;
 using CurrencyExchangeRates.Infrastructure.Repository;
 using CurrencyExchangeRates.Infrastructure.Services;
+using FluentValidation;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -50,6 +54,14 @@ namespace CurrencyExchangeRates.Infrastructure.DepedencyInjection
             services.AddScoped<WalletService>(); 
             services.AddMemoryCache();
             services.AddScoped<ICurrencyRateService, CurrencyRateCacheService>();
+            services.AddScoped<IWalletService, WalletService>();
+
+            // MediatR
+            services.AddMediatR(cfg =>
+                cfg.RegisterServicesFromAssembly(typeof(GetWalletBalanceQuery).Assembly));
+            // FluentValidation
+            services.AddValidatorsFromAssembly(typeof(GetWalletBalanceQueryValidator).Assembly);
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(EndpointInputValidation<,>));
 
             return services;
         }
