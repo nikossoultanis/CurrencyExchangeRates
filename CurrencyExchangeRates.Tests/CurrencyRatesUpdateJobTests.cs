@@ -1,8 +1,10 @@
 ﻿using Castle.Core.Logging;
+using CurrencyExchangeRates.Api.Controllers;
 using CurrencyExchangeRates.Application.Common.Interfaces;
 using CurrencyExchangeRates.Application.Common.Jobs.Implementaions;
 using CurrencyExchangeRates.Domain.Entities;
 using CurrencyExchangeRates.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;

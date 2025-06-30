@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CurrencyExchangeRates.Application.Common.Services
 {
-    public class WalletService
+    public class WalletService : IWalletService
     {
         private readonly ILogger<WalletService> _logger;
         private readonly IWalletRepository _walletRepository;

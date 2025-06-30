@@ -1,4 +1,5 @@
-﻿using CurrencyExchangeRates.Application.Common.Services;
+﻿using CurrencyExchangeRates.Application.Common.Interfaces;
+using CurrencyExchangeRates.Application.Common.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CurrencyExchangeRates.Api.Controllers
@@ -7,9 +8,9 @@ namespace CurrencyExchangeRates.Api.Controllers
     [Route("api/wallets")]
     public class WalletController : Controller
     {
-        private readonly WalletService _walletService;
+        private readonly IWalletService _walletService;
 
-        public WalletController(WalletService walletService)
+        public WalletController(IWalletService walletService)
         {
             _walletService = walletService;
         }
