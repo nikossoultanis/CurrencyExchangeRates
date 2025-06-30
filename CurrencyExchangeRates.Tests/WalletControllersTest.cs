@@ -1,6 +1,10 @@
 ﻿using CurrencyExchangeRates.Api.Controllers;
+using CurrencyExchangeRates.Application.Common.CQRS.Commands.Adjust;
+using CurrencyExchangeRates.Application.Common.CQRS.Commands.Create;
+using CurrencyExchangeRates.Application.Common.CQRS.Queries;
 using CurrencyExchangeRates.Application.Common.Interfaces;
 using CurrencyExchangeRates.Domain.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
@@ -16,12 +20,14 @@ namespace CurrencyExchangeRates.Tests
         [Fact]
         public async Task Create_ReturnsOk_WhenWalletIsCreated()
         {
-            var mockService = new Mock<IWalletService>();
-            mockService
-                .Setup(s => s.CreateWalletAsync("USD"))
+            var currency = "USD";
+            var mockMediator = new Mock<IMediator>();
+
+            mockMediator
+                .Setup(m => m.Send(It.IsAny<CreateWalletCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Wallet("USD"));
 
-            var controller = new WalletController(mockService.Object);
+            var controller = new WalletController(mockMediator.Object);
 
             // Act
             var result = await controller.Create("USD");
@@ -41,13 +47,12 @@ namespace CurrencyExchangeRates.Tests
             var currency = "USD";
             var expectedBalance = 150.75m;
 
-            var mockService = new Mock<IWalletService>();
-
-            mockService
-                .Setup(s => s.GetBalanceAsync(walletId, currency))
+            var mockMediator = new Mock<IMediator>();
+            mockMediator
+                .Setup(m => m.Send(It.Is<GetWalletBalanceQuery>(q => q.Id == walletId && q.Currency == currency), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(expectedBalance);
 
-            var controller = new WalletController(mockService.Object);
+            var controller = new WalletController(mockMediator.Object);
 
             // Act
             var result = await controller.GetBalance(walletId, currency);
@@ -65,13 +70,12 @@ namespace CurrencyExchangeRates.Tests
             string? currency = null;
             var expectedBalance = 99.99m;
 
-            var mockService = new Mock<IWalletService>();
-
-            mockService
-                .Setup(s => s.GetBalanceAsync(walletId, currency))
+            var mockMediator = new Mock<IMediator>();
+            mockMediator
+                .Setup(m => m.Send(It.Is<GetWalletBalanceQuery>(q => q.Id == walletId && q.Currency == currency), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(expectedBalance);
 
-            var controller = new WalletController(mockService.Object);
+            var controller = new WalletController(mockMediator.Object);
 
             // Act
             var result = await controller.GetBalance(walletId, currency);
@@ -91,22 +95,23 @@ namespace CurrencyExchangeRates.Tests
             var currency = "USD";
             var strategy = "AddFundsStrategy";
 
-            var mockService = new Mock<IWalletService>();
+            var mockMediator = new Mock<IMediator>();
+            mockMediator
+                .Setup(m => m.Send(It.Is<AdjustWalletBalanceCommand>(cmd =>
+                    cmd.Id == walletId &&
+                    cmd.Amount == amount &&
+                    cmd.Currency == currency &&
+                    cmd.Strategy == strategy), It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(Unit.Value));
 
-            mockService
-                .Setup(s => s.AdjustBalanceAsync(walletId, amount, currency, strategy))
-                .Returns(Task.CompletedTask);
-
-            var controller = new WalletController(mockService.Object);
+            var controller = new WalletController(mockMediator.Object);
 
             // Act
             var result = await controller.AdjustBalance(walletId, amount, currency, strategy);
 
             // Assert
             Assert.IsType<OkResult>(result);
-            mockService.Verify(
-                s => s.AdjustBalanceAsync(walletId, amount, currency, strategy),
-                Times.Once);
+            mockMediator.Verify(m => m.Send(It.IsAny<AdjustWalletBalanceCommand>(), It.IsAny<CancellationToken>()), Times.Once);
         }
     }
 }

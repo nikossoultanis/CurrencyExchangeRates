@@ -1,5 +1,7 @@
-﻿using CurrencyExchangeRates.Application.Common.Interfaces;
-using CurrencyExchangeRates.Application.Common.Services;
+﻿using CurrencyExchangeRates.Application.Common.CQRS.Commands.Adjust;
+using CurrencyExchangeRates.Application.Common.CQRS.Commands.Create;
+using CurrencyExchangeRates.Application.Common.CQRS.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CurrencyExchangeRates.Api.Controllers
@@ -8,11 +10,11 @@ namespace CurrencyExchangeRates.Api.Controllers
     [Route("api/wallets")]
     public class WalletController : Controller
     {
-        private readonly IWalletService _walletService;
+        private readonly IMediator _mediator;
 
-        public WalletController(IWalletService walletService)
+        public WalletController(IMediator mediator)
         {
-            _walletService = walletService;
+            _mediator = mediator;
         }
 
         [HttpPost]
@@ -20,14 +22,15 @@ namespace CurrencyExchangeRates.Api.Controllers
         {
             try
             {
-                var wallet = await _walletService.CreateWalletAsync(currency);
+                var command = new CreateWalletCommand { Currency = currency };
+                var wallet = await _mediator.Send(command);
                 return Ok(wallet);
             }
             catch (ArgumentException ex)
             {
                 return BadRequest(new { error = ex.Message });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, new { error = "An unexpected error occurred." });
             }
@@ -36,14 +39,27 @@ namespace CurrencyExchangeRates.Api.Controllers
         [HttpGet("{id}/balance")]
         public async Task<IActionResult> GetBalance(long id, [FromQuery] string? currency = null)
         {
-            var balance = await _walletService.GetBalanceAsync(id, currency);
-            return Ok(balance);
+            var result = await _mediator.Send(new GetWalletBalanceQuery
+            {
+                Id = id,
+                Currency = currency
+            });
+
+            return Ok(result);
         }
 
         [HttpPost("{id}/adjust")]
         public async Task<IActionResult> AdjustBalance(long id, [FromQuery] decimal amount, [FromQuery] string currency, [FromQuery] string strategy)
         {
-            await _walletService.AdjustBalanceAsync(id, amount, currency, strategy);
+            var command = new AdjustWalletBalanceCommand
+            {
+                Id = id,
+                Amount = amount,
+                Currency = currency,
+                Strategy = strategy
+            };
+
+            await _mediator.Send(command);
             return Ok();
         }
     }
