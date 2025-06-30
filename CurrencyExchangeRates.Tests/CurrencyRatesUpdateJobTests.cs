@@ -44,7 +44,7 @@ namespace CurrencyExchangeRates.Tests
 
             // Assert
             var count = await dbContext.CurrencyRates.CountAsync();
-            Assert.Equal(33, count);
+            Assert.Equal(34, count);
 
             var usdRate = await dbContext.CurrencyRates.FirstOrDefaultAsync(x => x.CurrencyCode == "USD");
             Assert.Equal(1.17m, usdRate.Rate);
