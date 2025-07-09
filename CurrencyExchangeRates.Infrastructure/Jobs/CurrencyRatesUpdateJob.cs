@@ -34,7 +34,7 @@ namespace CurrencyExchangeRates.Application.Common.Jobs.Implementaions
         {
             try
             {
-                var gateway = _gatewayFactory.GetGateway(providerName);
+                var gateway = _gatewayFactory.GetGateway(_ratesGateway.GatewayProviderName);
                 var rates = await gateway.GetDailyRatesAsync(cancellationToken);
 
                 var rows = rates.Select(r =>

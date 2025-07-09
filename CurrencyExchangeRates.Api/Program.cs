@@ -1,5 +1,6 @@
 using CurrencyExchangeRates.Infrastructure.Configuration;
 using CurrencyExchangeRates.Infrastructure.DepedencyInjection;
+using CurrencyExchangeRates.Infrastructure.Gateways;
 using Microsoft.AspNetCore.Diagnostics;
 using System.Threading.RateLimiting;
 
@@ -7,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.Configure<EcbGatewayOptions>(builder.Configuration.GetSection("EcbGateway"));
+builder.Services.Configure<OpenExchangeOptions>(builder.Configuration.GetSection("OpenExchange"));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

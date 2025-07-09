@@ -29,6 +29,7 @@ namespace CurrencyExchangeRates.Infrastructure.DepedencyInjection
 
             // Register ECB Gateway
             services.AddHttpClient<ICurrencyGateway, EcbGateway>();
+            services.AddHttpClient<ICurrencyGateway, OpenExchangeGateway>();
             services.AddScoped<ICurrencyGatewayFactory, CurrencyGatewayFactory>();
 
             services.AddScoped<CurrencyRateService>();
