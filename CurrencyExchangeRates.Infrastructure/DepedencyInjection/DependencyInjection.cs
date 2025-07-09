@@ -27,11 +27,17 @@ namespace CurrencyExchangeRates.Infrastructure.DepedencyInjection
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-            // Register ECB Gateway
-            services.AddHttpClient<ICurrencyGateway, EcbGateway>();
-            services.AddHttpClient<ICurrencyGateway, OpenExchangeGateway>();
+            services.AddHttpClient<EcbGateway>();
+            services.AddHttpClient<OpenExchangeGateway>();
             services.AddScoped<ICurrencyGatewayFactory, CurrencyGatewayFactory>();
-
+            services.AddScoped<IEnumerable<ICurrencyGateway>>(sp =>
+            {
+                return new List<ICurrencyGateway>
+                {
+                    sp.GetRequiredService<EcbGateway>(),
+                    sp.GetRequiredService<OpenExchangeGateway>()
+                };
+            });
             services.AddScoped<CurrencyRateService>();
 
             services.AddScoped<ICurrencyRatesUpdateJob, CurrencyRatesUpdateJob>();
