@@ -1,5 +1,6 @@
 ﻿using CurrencyExchangeRates.Application.Common.Interfaces;
 using CurrencyExchangeRates.Domain.Entities;
+using CurrencyExchangeRates.Infrastructure.Configuration;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 
@@ -49,11 +50,5 @@ namespace CurrencyExchangeRates.Infrastructure.Gateways
     {
         public string Base { get; set; }
         public Dictionary<string, double> Rates { get; set; }
-    }
-
-    public class OpenExchangeOptions
-    {
-        public string BaseUrl { get; set; }
-        public string AppId { get; set; }
     }
 }
