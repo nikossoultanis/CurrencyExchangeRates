@@ -16,7 +16,8 @@ namespace CurrencyExchangeRates.Infrastructure.Jobs
 
         public async Task Execute(IJobExecutionContext context)
         {
-            await _job.ExecuteAsync(context.CancellationToken, "ECB");
+            var providerName = context.JobDetail.JobDataMap.GetString("ECBProvider") ?? "ECB";
+            await _job.ExecuteAsync(context.CancellationToken, providerName);
         }
     }
 

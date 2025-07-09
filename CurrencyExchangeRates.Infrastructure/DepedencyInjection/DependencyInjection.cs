@@ -38,13 +38,22 @@ namespace CurrencyExchangeRates.Infrastructure.DepedencyInjection
 
             services.AddQuartz(q =>
             {
-                var jobKey = new JobKey("CurrencyRatesUpdateJob");
+                // Define the job with identity and add the ECBProvider key
+                var jobKey = new JobKey("CurrencyRatesUpdateJob", "CurrencyJobs");
 
-                q.ScheduleJob<QuartzCurrencyRatesUpdateJob>(trigger => trigger
-                    .WithIdentity("CurrencyRatesUpdateTrigger")
+                q.AddJob<QuartzCurrencyRatesUpdateJob>(opts =>
+                    opts.WithIdentity(jobKey)
+                        .UsingJobData("ECBProvider", "ECB")
+                );
+
+                q.AddTrigger(opts => opts
+                    .ForJob(jobKey)
+                    .WithIdentity("CurrencyRatesUpdateTrigger", "CurrencyTriggers")
                     .StartNow()
-                    .WithSimpleSchedule(x => x.WithIntervalInMinutes(1).RepeatForever()));
+                    .WithSimpleSchedule(x => x.WithIntervalInHours(1).RepeatForever())
+                );
             });
+
 
             services.AddQuartzHostedService();
             services.AddScoped<ICurrencyRateRepository, CurrencyRateRepository>();

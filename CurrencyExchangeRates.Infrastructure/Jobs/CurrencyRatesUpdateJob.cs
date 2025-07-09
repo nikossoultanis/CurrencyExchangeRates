@@ -10,7 +10,6 @@ namespace CurrencyExchangeRates.Application.Common.Jobs.Implementaions
 
     public class CurrencyRatesUpdateJob : ICurrencyRatesUpdateJob
     {
-        private readonly ICurrencyGateway _ratesGateway;
         private readonly ICurrencyGatewayFactory _gatewayFactory;
         private readonly AppDbContext _dbContext;
         private readonly ICurrencyRateService _currencyRateService;
@@ -18,13 +17,11 @@ namespace CurrencyExchangeRates.Application.Common.Jobs.Implementaions
 
         public CurrencyRatesUpdateJob(
             ICurrencyGatewayFactory gatewayFactory, 
-            ICurrencyGateway rateGateway,
             AppDbContext dbContext,
             ICurrencyRateService currencyRateService,
             ILogger<ICurrencyRatesUpdateJob> logger)
         {
             _gatewayFactory = gatewayFactory;
-            _ratesGateway = rateGateway;
             _dbContext = dbContext;
             _currencyRateService = currencyRateService;
             _logger = logger;
@@ -34,7 +31,7 @@ namespace CurrencyExchangeRates.Application.Common.Jobs.Implementaions
         {
             try
             {
-                var gateway = _gatewayFactory.GetGateway(_ratesGateway.GatewayProviderName);
+                var gateway = _gatewayFactory.GetGateway(providerName);
                 var rates = await gateway.GetDailyRatesAsync(cancellationToken);
 
                 var rows = rates.Select(r =>

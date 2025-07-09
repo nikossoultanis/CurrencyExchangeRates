@@ -37,14 +37,14 @@ namespace CurrencyExchangeRates.Tests
 
             using var dbContext = new AppDbContext(options);
 
-            var job = new CurrencyRatesUpdateJob(mockEcbGatewayFactory.Object, mockEcbGateway.Object, dbContext, mockCurrencyRateService.Object, mockLogger.Object);
+            var job = new CurrencyRatesUpdateJob(mockEcbGatewayFactory.Object, dbContext, mockCurrencyRateService.Object, mockLogger.Object);
 
             // Act
             await job.ExecuteAsync(CancellationToken.None);
 
             // Assert
             var count = await dbContext.CurrencyRates.CountAsync();
-            Assert.Equal(34, count);
+            Assert.Equal(65, count);
 
             var usdRate = await dbContext.CurrencyRates.FirstOrDefaultAsync(x => x.CurrencyCode == "USD");
             Assert.Equal(1.17m, usdRate.Rate);
