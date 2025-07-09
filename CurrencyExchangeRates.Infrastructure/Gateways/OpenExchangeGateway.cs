@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace CurrencyExchangeRates.Infrastructure.Gateways
 {
-    internal class OpenExchangeGateway : ICurrencyGateway
+    public class OpenExchangeGateway : ICurrencyGateway
     {
         private readonly HttpClient _httpClient;
         private readonly OpenExchangeOptions _options;

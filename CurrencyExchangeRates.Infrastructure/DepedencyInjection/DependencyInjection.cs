@@ -38,7 +38,7 @@ namespace CurrencyExchangeRates.Infrastructure.DepedencyInjection
                     sp.GetRequiredService<OpenExchangeGateway>()
                 };
             });
-            services.AddScoped<CurrencyRateService>();
+            services.AddScoped<Application.Common.Services.CurrencyRateService>();
 
             services.AddScoped<ICurrencyRatesUpdateJob, CurrencyRatesUpdateJob>();
 
@@ -69,7 +69,7 @@ namespace CurrencyExchangeRates.Infrastructure.DepedencyInjection
             services.AddScoped<IFundsAdjustmentStrategy, ForceSubtractFundsStrategy>();
             services.AddScoped<WalletService>(); 
             services.AddMemoryCache();
-            services.AddScoped<ICurrencyRateService, CurrencyRateCacheService>();
+            services.AddScoped<ICurrencyRateService, Services.CurrencyRateService>();
             services.AddScoped<IWalletService, WalletService>();
 
             // MediatR

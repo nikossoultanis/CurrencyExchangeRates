@@ -6,14 +6,14 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace CurrencyExchangeRates.Infrastructure.Services
 {
-    public class CurrencyRateCacheService : ICurrencyRateService
+    public class CurrencyRateService : ICurrencyRateService
     {
         private readonly IMemoryCache _cache;
         private readonly ICurrencyRateRepository _currencyRateRepository;
 
         private static readonly string CacheKey = "LatestCurrencyRates";
 
-        public CurrencyRateCacheService(
+        public CurrencyRateService(
             IMemoryCache cache,
             ICurrencyRateRepository currencyRateRepository)
         {
